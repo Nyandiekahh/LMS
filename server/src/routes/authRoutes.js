@@ -6,9 +6,15 @@ const { validate, registerValidation, loginValidation } = require('../middleware
 
 // Register routes
 router.post('/register/teacher', validate(registerValidation), authController.registerTeacher);
+router.post('/register/school', authController.registerSchool);
 
 // Login route
 router.post('/login', validate(loginValidation), authController.login);
+
+// Get current user route
+router.get('/me', (req, res) => {
+  authController.getMe(req, res);
+});
 
 // Test route
 router.get('/test', (req, res) => {

@@ -131,4 +131,26 @@ const authController = {
   }),
 };
 
+// Add this to your authController.js
+verifySchoolCode: catchAsync(async (req, res) => {
+  const { code } = req.body;
+  
+  const school = await School.findOne({ code });
+  if (!school) {
+    throw new ApiError(404, 'Invalid school code');
+  }
+
+  // Check if school has reached maximum teachers
+  const teacherCount = await User.countDocuments({ school: school._id, role: 'teacher' });
+  if (teacherCount >= school.maxTeachers) {
+    throw new ApiError(400, 'School has reached maximum teacher capacity');
+  }
+
+  res.json({
+    isValid: true,
+    schoolId: school._id,
+    schoolName: school.name
+  });
+}),
+
 module.exports = authController;
